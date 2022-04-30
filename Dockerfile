@@ -72,7 +72,7 @@ RUN \
     dpkg -i ${MFS_DEB} && \
     echo "**** add rclone ****" && \
     RCLONE_VERSION=$(wget --no-check-certificate -O - -o /dev/null "https://api.github.com/repos/rclone/rclone/releases/latest" | awk '/tag_name/{print $4;exit}' FS='[""]') && \
-    RCLONE_DEB="rclone-${RCLONE_VERSION}-linux-$(dpkg --print-architecture).deb" && \
+    RCLONE_DEB="rclone-${RCLONE_VERSION}-linux-${TARGETARCH}.deb" && \
     cd $(mktemp -d) && wget --no-check-certificate "https://github.com/rclone/rclone/releases/download/${RCLONE_VERSION}/${RCLONE_DEB}" && \
     dpkg -i ${RCLONE_DEB} && \
     echo "**** create abc user ****" && \
