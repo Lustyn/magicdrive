@@ -5,7 +5,7 @@ A ✨ *magic* ✨ container that will overlay a decrypted copy of your rclone cr
 
 # Installation
 
-1. Setup your docker-compose.yml
+## 1. Setup your `docker-compose.yml`
 
 ```yml
 version: "3.8"
@@ -32,14 +32,26 @@ services:
       - TZ=${TZ}
 ```
 
-2. Start magicdrive
+## 2. Start magicdrive
+
+Start your service, or set of services defined in `docker-compose.yml`.
 
 ```s
 $ docker-compose up -d
 ```
 
-3. Configure plexdrive and rclone
+## 3. Configure Plexdrive and Rclone
+
+You'll need to supply Plexdrive and Rclone with credentials, and additionally configure your Rclone crypt mount.
 
 ```s
 $ docker-compose exec magicdrive setup
+```
+
+## 4. Use your magic mount!
+You can now write or read from your mount! **Please note**, this container **DOES NOT** currently move files from your local storage to Google Drive, so please keep whatever you store in the `/local` volume safe.
+
+```s
+$ ls /data/files
+docs  downloads  media
 ```
