@@ -1,4 +1,4 @@
-name: buildx
+name: Release
 
 on:
   push:
@@ -13,7 +13,7 @@ env:
   IMAGE_NAME: lustyn/magicdrive
 
 jobs:
-  build-release:
+  build:
     runs-on: ubuntu-20.04
     steps:
       -
