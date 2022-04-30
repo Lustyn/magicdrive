@@ -3,9 +3,9 @@ name: buildx
 on:
   push:
     branches:
-      - *
+      - '*'
     tags:
-      - *
+      - '*'
 
 env:
   IMAGE_NAME: lustyn/magicdrive
