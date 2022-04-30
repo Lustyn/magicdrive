@@ -13,7 +13,7 @@ env:
   IMAGE_NAME: lustyn/magicdrive
 
 jobs:
-  buildx:
+  build-branch:
     runs-on: ubuntu-20.04
     steps:
       -
