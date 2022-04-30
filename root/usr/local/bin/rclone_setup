@@ -1,0 +1,16 @@
+#!/usr/bin/with-contenv bash
+. /usr/local/bin/variables
+
+echo "
+==============================================================
+Setup Rclone
+==============================================================
+"
+
+if [ -f "${rclone_config}" ]; then
+  echo "Rclone has already been set up."
+  echo "Try again after removing 'rclone.conf' in /config."
+else
+  read -e -i "${rclone_mountpoint}" -p "Path to encrypted files (press enter if you don't need a subpath): " remote
+  rclone config create --all --config "${rclone_config}" "${rclone_remote}" crypt "remote=${remote}"
+fi

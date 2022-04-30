@@ -1,0 +1,12 @@
+#!/usr/bin/with-contenv bash
+. /usr/local/bin/variables
+
+IFS=" " read -r -a rclone_user_opts <<< "$RCLONE_OPTS"
+
+waitmount "${pd_mountpoint}"
+
+mount_command="rclone mount ${rclone_basic_opts} ${rclone_user_opts[@]} ${rclone_remote} ${rclone_mountpoint}"
+echo "*** mounting => $mount_command"
+
+exec s6-notifyoncheck -d -n 0 -s 3000 \
+    s6-setuidgid abc $mount_command

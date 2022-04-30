@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  magicdrive:
+    build: ghcr.io/lustyn/magicdrive
+    restart: unless-stopped
+    volumes:
+      - /config/magicdrive:/config
+      - /data/local:/local
+      - type: bind
+        source: /data/files
+        target: /data
+        bind:
+          propagation: shared
+    devices:
+      - /dev/fuse
+    cap_add:
+      - SYS_ADMIN
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}

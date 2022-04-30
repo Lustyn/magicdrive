@@ -1,9 +1,4 @@
 #!/usr/bin/with-contenv bash
 . /usr/local/bin/variables
 
-# checkmount fuse
-checkmount "${pd_mountpoint}"
 checkmount "${rclone_mountpoint}"
-checkmount "${mfs_mountpoint}"
-
-exit 0

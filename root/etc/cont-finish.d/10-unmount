@@ -1,9 +1,9 @@
 #!/usr/bin/with-contenv bash
-
-unmount() { if findmnt "$1" | grep -q fuse; then fusermount -uz "$1" ; fi }
+. /usr/local/bin/variables
 
 # unmount fuse
-unmount /data
-[[ -n "${POOLING_FS:-}" ]] && unmount /cloud
+unmount "${mfs_mountpoint}"
+unmount "${rclone_mountpoint}"
+unmount "${pd_mountpoint}"
 
 exit 0

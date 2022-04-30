@@ -1,11 +1,29 @@
 #!/usr/bin/with-contenv bash
 
-[[ -n "${POOLING_FS:-}" ]] && pd_mountpoint="/cloud" || pd_mountpoint="/data"
+unmount() {
+    if findmnt "$1" | grep -q fuse; then
+        fusermount -uz "$1"
+    fi
+}
 
-# umaks
-# https://github.com/plexdrive/plexdrive/issues/230
+checkmount() {
+    if ! findmnt "$1" | grep -q fuse; then
+        exit 1
+    fi
+}
 
+waitmount() {
+    while ! findmnt "$1" | grep -q fuse; do
+        echo "*** waiting for mount $1. retrying in 2s ..."
+        sleep 2
+    done
+}
+
+pd_config="/config/config.json"
+pd_token="/config/token.json"
+pd_mountpoint="/enc"
 pd_basic_opts="
+-v 2
 --config /config/
 --uid=${PUID:-911}
 --gid=${PGID:-911}
@@ -13,8 +31,16 @@ pd_basic_opts="
 -o allow_other
 "
 
-mfs_basic_opts="uid=${PUID:-911},gid=${PGID:-911},umask=022,allow_other"
-mfs_branches="/local=RW:/cloud${PLEXDRIVE_PATH:-}=NC"
+rclone_config="/config/rclone.conf"
+rclone_remote="dec:"
+rclone_mountpoint="/dec"
+rclone_basic_opts="
+--config ${rclone_config}
+--allow-other
+--allow-non-empty
+-v
+"
 
-ufs_basic_opts="uid=${PUID:-911},gid=${PGID:-911},umask=022,allow_other"
-ufs_branches="/local=RW:/cloud${PLEXDRIVE_PATH:-}=RO"
+mfs_mountpoint="/data"
+mfs_basic_opts="-f -o uid=${PUID:-911},gid=${PGID:-911},umask=022,allow_other,nonempty"
+mfs_branches="/local=RW:${rclone_mountpoint}${PLEXDRIVE_PATH:-}=NC"

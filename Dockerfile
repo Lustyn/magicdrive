@@ -41,8 +41,8 @@ ADD https://raw.githubusercontent.com/by275/docker-base/main/_/etc/cont-init.d/w
 # release
 # 
 FROM ubuntu
-LABEL maintainer="wiserain"
-LABEL org.opencontainers.image.source https://github.com/wiserain/docker-plexdrive
+LABEL maintainer="lustyn"
+LABEL org.opencontainers.image.source https://github.com/lustyn/magicdrive
 
 ARG DEBIAN_FRONTEND="noninteractive"
 ARG APT_MIRROR="archive.ubuntu.com"
@@ -62,7 +62,6 @@ RUN \
         fuse \
         openssl \
         tzdata \
-        unionfs-fuse \
         wget && \
     update-ca-certificates && \
     sed -i 's/#user_allow_other/user_allow_other/' /etc/fuse.conf && \
@@ -71,6 +70,11 @@ RUN \
     MFS_DEB="mergerfs_${MFS_VERSION}.ubuntu-focal_$(dpkg --print-architecture).deb" && \
     cd $(mktemp -d) && wget --no-check-certificate "https://github.com/trapexit/mergerfs/releases/download/${MFS_VERSION}/${MFS_DEB}" && \
     dpkg -i ${MFS_DEB} && \
+    echo "**** add rclone ****" && \
+    RCLONE_VERSION=$(wget --no-check-certificate -O - -o /dev/null "https://api.github.com/repos/rclone/rclone/releases/latest" | awk '/tag_name/{print $4;exit}' FS='[""]') && \
+    RCLONE_DEB="rclone-${RCLONE_VERSION}-linux-$(dpkg --print-architecture).deb" && \
+    cd $(mktemp -d) && wget --no-check-certificate "https://github.com/rclone/rclone/releases/download/${RCLONE_VERSION}/${RCLONE_DEB}" && \
+    dpkg -i ${RCLONE_DEB} && \
     echo "**** create abc user ****" && \
     useradd -u 911 -U -d /config -s /bin/false abc && \
     usermod -G users abc && \
@@ -89,10 +93,9 @@ ENV \
     S6_KILL_GRACETIME=5000 \
     LANG=C.UTF-8 \
     PS1="\u@\h:\w\\$ " \
-    UFS_USER_OPTS="cow,direct_io,nonempty,auto_cache,sync_read" \
-    MFS_USER_OPTS="rw,use_ino,func.getattr=newest,category.action=all,category.create=ff,cache.files=auto-full,dropcacheonclose=true"
+    MERGERFS_OPTS="rw,use_ino,func.getattr=newest,category.action=all,category.create=ff,cache.files=auto-full,dropcacheonclose=true"
 
-VOLUME /config /cache /cloud /data /local
+VOLUME /config /cache /enc /dec /data /local
 WORKDIR /data
 
 HEALTHCHECK --interval=30s --timeout=30s --start-period=10s --retries=3 \

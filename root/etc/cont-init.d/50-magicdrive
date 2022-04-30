@@ -1,0 +1,40 @@
+#!/usr/bin/with-contenv bash
+. /usr/local/bin/variables
+
+echo "*** checking plexdrive config"
+while [ ! -f "/config/config.json" ] || [ ! -f "/config/token.json" ]; do
+    echo "Waiting for plexdrive config files in /config. Retrying in 30s ..."
+    echo "RUN: docker exec -it <CONTAINER_NAME> plexdrive_setup"
+    sleep 30
+done
+
+echo "*** checking rclone config"
+while [ ! -f "${rclone_config}" ] || [ ! cat ${rclone_config} | grep -q '[dec]' ]; do
+    echo "Waiting for rclone config file in /config/rclone.conf. Retrying in 30s ..."
+    echo "RUN: docker exec -it <CONTAINER_NAME> rclone_setup"
+    sleep 30
+done
+
+check_mountpoint() {
+    echo "*** checking mountpoint: ${pd_mountpoint}"
+    while findmnt "${1}" | grep -q fuse; do
+        echo "ERROR: mountpoint (${1}) already mounted"
+        fusermount -uz "${1}"
+        echo "Retrying in 15s ..."
+        sleep 15
+    done
+}
+
+check_mountpoint "${mfs_mountpoint}"
+check_mountpoint "${rclone_mountpoint}"
+check_mountpoint "${pd_mountpoint}"
+
+# permissions
+chown -R abc:abc \
+    /config /cache ${pd_mountpoint} ${rclone_mountpoint} ${mfs_mountpoint}
+chown abc:abc /local
+
+# display version
+echo "*** plexdrive $(plexdrive --version) ready!"
+echo "*** rclone $(rclone --version) ready!"
+echo "*** mergerfs $(mergerfs --version) ready!"

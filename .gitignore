@@ -1,3 +1,7 @@
 .idea/
 config/
 cache/
+.env
+docker-compose.yml
+rclone.conf
+{config,token}.json

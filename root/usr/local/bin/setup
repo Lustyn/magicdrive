@@ -1,0 +1,10 @@
+#!/usr/bin/with-contenv bash
+. /usr/local/bin/variables
+
+if [ ! -f "${pd_config}" ] || [ ! -f "${pd_token}" ]; then
+    plexdrive_setup
+fi
+
+if [ ! -f "${rclone_config}" ]; then
+    rclone_setup
+fi

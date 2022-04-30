@@ -1,0 +1,12 @@
+#!/usr/bin/with-contenv bash
+. /usr/local/bin/variables
+
+IFS=" " read -r -a mfs_user_opts <<< "$MERGERFS_OPTS"
+
+waitmount "${rclone_mountpoint}"
+
+mount_command="mergerfs ${mfs_basic_opts} ${mfs_user_opts[@]} ${mfs_branches} ${mfs_mountpoint}"
+echo "*** pooling => $mount_command"
+
+exec s6-notifyoncheck -d -n 0 -s 3000 \
+    s6-setuidgid abc $mount_command
