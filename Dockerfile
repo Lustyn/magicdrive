@@ -93,7 +93,7 @@ ENV \
     S6_KILL_GRACETIME=5000 \
     LANG=C.UTF-8 \
     PS1="\u@\h:\w\\$ " \
-    MERGERFS_OPTS="rw,use_ino,func.getattr=newest,category.action=all,category.create=ff,cache.files=auto-full,dropcacheonclose=true"
+    MERGERFS_OPTS="-o rw,use_ino,func.getattr=newest,category.action=all,category.create=ff,cache.files=auto-full,dropcacheonclose=true"
 
 VOLUME /config /cache /enc /dec /data /local
 WORKDIR /data
