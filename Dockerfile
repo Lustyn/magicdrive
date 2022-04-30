@@ -51,8 +51,6 @@ RUN \
     echo "**** create abc user ****" && \
     useradd -u 911 -U -d /config -s /bin/false abc && \
     usermod -G users abc && \
-    echo "**** permissions ****" && \
-    chmod a+x /usr/local/bin/* && \
     echo "**** cleanup ****" && \
     apt-get clean autoclean && \
     apt-get autoremove -y && \
@@ -60,6 +58,11 @@ RUN \
 
 # copy build
 COPY root/ /
+
+# mark all local/bin as executable
+RUN \
+    echo "**** permissions ****" && \
+    chmod a+x /usr/local/bin/*
 
 # environment settings
 ENV \
@@ -74,7 +77,7 @@ ENV \
 VOLUME /config /cache /enc /dec /data /local
 WORKDIR /data
 
-HEALTHCHECK --interval=30s --timeout=30s --start-period=10s --retries=3 \
+HEALTHCHECK --interval=10s --timeout=30s --start-period=10s --retries=10 \
     CMD /usr/local/bin/healthcheck
 
 ENTRYPOINT ["/init"]
