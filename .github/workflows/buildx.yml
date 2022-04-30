@@ -7,6 +7,10 @@ on:
     tags:
       - '*'
 
+permissions:
+  contents: read
+  packages: write
+
 env:
   IMAGE_NAME: lustyn/magicdrive
 
@@ -79,11 +83,8 @@ jobs:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
           status: ${{ job.status }}
           description: |
-            ghcr.io/${{ env.IMAGE_NAME }}:latest
-            ghcr.io/${{ env.IMAGE_NAME }}:${{ env.VER_FULL }}
-            ghcr.io/${{ env.IMAGE_NAME }}:${{ env.VER_MINOR }}
-            ghcr.io/${{ env.IMAGE_NAME }}:${{ env.VER_MAJOR }}
-            ghcr.io/${{ env.IMAGE_NAME }}:${{ steps.vars.outputs.SOURCE_REF }}
+            magicdrive ${{ env.VER_FULL }}
+            `ghcr.io/${{ env.IMAGE_NAME }}:${{ env.VER_FULL }}`
 
   buildx-ref:
     runs-on: ubuntu-20.04
@@ -149,4 +150,5 @@ jobs:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
           status: ${{ job.status }}
           description: |
+            magicdrive ${{ steps.vars.outputs.SOURCE_REF }}
             ghcr.io/${{ env.IMAGE_NAME }}:${{ steps.vars.outputs.SOURCE_REF }}
