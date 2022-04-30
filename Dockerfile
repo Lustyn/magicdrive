@@ -1,54 +1,24 @@
 ARG UBUNTU_VER=20.04
 
-FROM ubuntu:${UBUNTU_VER} AS ubuntu
 FROM ghcr.io/by275/base:ubuntu${UBUNTU_VER} AS prebuilt
-
-# 
-# BUILD
-# 
-FROM ubuntu AS builder
+FROM ubuntu:${UBUNTU_VER} AS ubuntu
 
 ARG TARGETARCH
 ARG PLEXDRIVE_VER="5.2.1"
 ARG DEBIAN_FRONTEND="noninteractive"
+ARG APT_MIRROR="archive.ubuntu.com"
 
-# build artifacts root
-RUN mkdir -p /bar/usr/local/bin
-
-RUN \
-    echo "**** install build packages ****" && \
-    apt-get update && \
-    apt-get install -yq --no-install-recommends \
-        ca-certificates \
-        curl
-
-# add s6 overlay
-COPY --from=prebuilt /s6/ /bar/
-
-RUN \
-    echo "**** add plexdrive ****" && \
-    PLEXDRIVE_ARCH=$(if [ "$TARGETARCH" = "arm" ]; then echo "arm7"; else echo "$TARGETARCH"; fi) && \
-    curl -o /bar/usr/local/bin/plexdrive -LJ https://github.com/plexdrive/plexdrive/releases/download/${PLEXDRIVE_VER}/plexdrive-linux-${PLEXDRIVE_ARCH}
-
-# add local files
-COPY root/ /bar/
-
-ADD https://raw.githubusercontent.com/by275/docker-base/main/_/etc/cont-init.d/adduser /bar/etc/cont-init.d/10-adduser
-ADD https://raw.githubusercontent.com/by275/docker-base/main/_/etc/cont-init.d/install-pkg /bar/etc/cont-init.d/20-install-pkg
-ADD https://raw.githubusercontent.com/by275/docker-base/main/_/etc/cont-init.d/wait-for-mnt /bar/etc/cont-init.d/30-wait-for-mnt
-
-# 
-# release
-# 
-FROM ubuntu
 LABEL maintainer="lustyn"
 LABEL org.opencontainers.image.source https://github.com/lustyn/magicdrive
 
-ARG DEBIAN_FRONTEND="noninteractive"
-ARG APT_MIRROR="archive.ubuntu.com"
+RUN mkdir -p /usr/local/bin
 
-# add build artifacts
-COPY --from=builder /bar/ /
+# install s6
+COPY --from=prebuilt /s6/ /
+
+ADD https://raw.githubusercontent.com/by275/docker-base/main/_/etc/cont-init.d/adduser /etc/cont-init.d/10-adduser
+ADD https://raw.githubusercontent.com/by275/docker-base/main/_/etc/cont-init.d/install-pkg /etc/cont-init.d/20-install-pkg
+ADD https://raw.githubusercontent.com/by275/docker-base/main/_/etc/cont-init.d/wait-for-mnt /etc/cont-init.d/30-wait-for-mnt
 
 # install packages
 RUN \
@@ -65,6 +35,9 @@ RUN \
         wget && \
     update-ca-certificates && \
     sed -i 's/#user_allow_other/user_allow_other/' /etc/fuse.conf && \
+    echo "**** add plexdrive ****" && \
+    PLEXDRIVE_ARCH=$(if [ "$TARGETARCH" = "arm" ]; then echo "arm7"; else echo "$TARGETARCH"; fi) && \
+    wget -O /usr/local/bin/plexdrive --no-check-certificate "https://github.com/plexdrive/plexdrive/releases/download/$PLEXDRIVE_VER/plexdrive-linux-${PLEXDRIVE_ARCH}" && \
     echo "**** add mergerfs ****" && \
     MFS_VERSION=$(wget --no-check-certificate -O - -o /dev/null "https://api.github.com/repos/trapexit/mergerfs/releases/latest" | awk '/tag_name/{print $4;exit}' FS='[""]') && \
     MFS_DEB="mergerfs_${MFS_VERSION}.ubuntu-focal_$(dpkg --print-architecture).deb" && \
@@ -72,7 +45,7 @@ RUN \
     dpkg -i ${MFS_DEB} && \
     echo "**** add rclone ****" && \
     RCLONE_VERSION=$(wget --no-check-certificate -O - -o /dev/null "https://api.github.com/repos/rclone/rclone/releases/latest" | awk '/tag_name/{print $4;exit}' FS='[""]') && \
-    RCLONE_DEB="rclone-${RCLONE_VERSION}-linux-${TARGETARCH}.deb" && \
+    RCLONE_DEB="rclone-${RCLONE_VERSION}-linux-$TARGETARCH.deb" && \
     cd $(mktemp -d) && wget --no-check-certificate "https://github.com/rclone/rclone/releases/download/${RCLONE_VERSION}/${RCLONE_DEB}" && \
     dpkg -i ${RCLONE_DEB} && \
     echo "**** create abc user ****" && \
@@ -84,6 +57,9 @@ RUN \
     apt-get clean autoclean && \
     apt-get autoremove -y && \
     rm -rf /tmp/* /var/lib/{apt,dpkg,cache,log}/
+
+# copy build
+COPY root/ /
 
 # environment settings
 ENV \
