@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   magicdrive:
-    build: ghcr.io/lustyn/magicdrive
+    image: ghcr.io/lustyn/magicdrive:latest
     restart: unless-stopped
     volumes:
       - /config/magicdrive:/config

@@ -12,7 +12,7 @@ version: "3.8"
 
 services:
   magicdrive:
-    build: ghcr.io/lustyn/magicdrive # or `build: ${PATH_TO_MAGICDRIVE}` if you want to build from source
+    image: ghcr.io/lustyn/magicdrive:latest # or `build: ${PATH_TO_MAGICDRIVE}` if you want to build from source
     restart: unless-stopped
     volumes:
       - /config/magicdrive:/config   # where plexdrive & rclone configs will be stored
