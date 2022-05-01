@@ -1,4 +1,4 @@
-name: Branch
+name: Branch Image Build
 
 on:
   push:
