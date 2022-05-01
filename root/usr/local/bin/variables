@@ -28,7 +28,7 @@ pd_basic_opts="
 --uid=${PUID:-911}
 --gid=${PGID:-911}
 --umask=0100775
--o allow_other
+-o allow_other,direct_io
 "
 
 rclone_config="/config/rclone.conf"
@@ -42,5 +42,5 @@ rclone_basic_opts="
 "
 
 mfs_mountpoint="/data"
-mfs_basic_opts="-f -o uid=${PUID:-911},gid=${PGID:-911},umask=022,allow_other,nonempty"
+mfs_basic_opts="-f -o uid=${PUID:-911},gid=${PGID:-911},umask=022,allow_other,nonempty,rw,use_ino,func.getattr=newest,category.action=all,category.create=ff,cache.files=auto-full,dropcacheonclose=true"
 mfs_branches="/local=RW:${rclone_mountpoint}${PLEXDRIVE_PATH:-}=NC"
