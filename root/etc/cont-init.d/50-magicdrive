@@ -9,7 +9,7 @@ while [ ! -f "/config/config.json" ] || [ ! -f "/config/token.json" ]; do
 done
 
 echo "*** checking rclone config"
-while [ ! -f "${rclone_config}" ] || [ ! cat ${rclone_config} | grep -q '[dec]' ]; do
+while [ ! -f "${rclone_config}" ] || [ ! cat "${rclone_config}" | grep -q "[dec]" ]; do
     echo "Waiting for rclone config file in /config/rclone.conf. Retrying in 30s ..."
     echo "RUN: docker exec -it <CONTAINER_NAME> rclone_setup"
     sleep 30
