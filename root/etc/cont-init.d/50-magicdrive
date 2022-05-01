@@ -3,14 +3,14 @@
 
 echo "*** checking plexdrive config"
 while [ ! -f "${pd_config}" ] || [ ! -f "${pd_token}" ]; do
-    echo "Waiting for plexdrive config files in /config. Retrying in 30s ..."
+    echo "Waiting for plexdrive config files in ${config_dir}. Retrying in 30s ..."
     echo "RUN: docker exec -it <CONTAINER_NAME> plexdrive_setup"
     sleep 30
 done
 
 echo "*** checking rclone config"
 while [ ! -f "${rclone_config}" ]; do
-    echo "Waiting for rclone config file in /config/rclone.conf. Retrying in 30s ..."
+    echo "Waiting for rclone config file in ${rclone_config}. Retrying in 30s ..."
     echo "RUN: docker exec -it <CONTAINER_NAME> rclone_setup"
     sleep 30
 done
@@ -31,7 +31,7 @@ check_mountpoint "${pd_mountpoint}"
 
 # permissions
 chown -R abc:abc \
-    /config /cache ${pd_mountpoint} ${rclone_mountpoint} ${mfs_mountpoint}
+    ${config_dir} ${pd_mountpoint} ${rclone_mountpoint} ${mfs_mountpoint} /cache
 chown abc:abc /local
 
 # display version

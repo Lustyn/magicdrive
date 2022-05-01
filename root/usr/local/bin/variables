@@ -19,19 +19,21 @@ waitmount() {
     done
 }
 
-pd_config="/config/config.json"
-pd_token="/config/token.json"
+config_dir="/config"
+
+pd_config="${config_dir}/config.json"
+pd_token="${config_dir}/token.json"
 pd_mountpoint="/enc"
 pd_basic_opts="
 -v 2
---config /config/
+--config ${config_dir}/
 --uid=${PUID:-911}
 --gid=${PGID:-911}
 --umask=0100775
 -o allow_other,direct_io
 "
 
-rclone_config="/config/rclone.conf"
+rclone_config="${config_dir}/rclone.conf"
 rclone_remote="dec:"
 rclone_mountpoint="/dec"
 rclone_basic_opts="
