@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   magicdrive:
     image: ghcr.io/lustyn/magicdrive:latest

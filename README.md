@@ -8,11 +8,9 @@ A ✨ *magic* ✨ container that will overlay a decrypted copy of your rclone cr
 ## 1. Setup your `docker-compose.yml`
 
 ```yml
-version: "3.8"
-
 services:
   magicdrive:
-    image: ghcr.io/lustyn/magicdrive:latest # or `build: ${PATH_TO_MAGICDRIVE}` if you want to build from source
+    image: ghcr.io/lustyn/magicdrive:latest # `magicdrive:master` for latest git, `build: .` to build from source
     restart: unless-stopped
     volumes:
       - /config/magicdrive:/config   # where plexdrive & rclone configs will be stored
@@ -37,7 +35,7 @@ services:
 Start your service, or set of services defined in `docker-compose.yml`.
 
 ```s
-$ docker-compose up -d
+$ docker compose up -d
 ```
 
 ## 3. Configure Plexdrive and Rclone
@@ -45,7 +43,7 @@ $ docker-compose up -d
 You'll need to supply Plexdrive and Rclone with credentials, and additionally configure your Rclone crypt mount.
 
 ```s
-$ docker-compose exec magicdrive setup
+$ docker compose exec magicdrive setup
 ```
 
 ## 4. Use your magic mount!
