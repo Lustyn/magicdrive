@@ -3,7 +3,7 @@
 A ✨ *magic* ✨ container that will overlay a decrypted copy of your rclone crypt hosted on Google Drive, optimized for Plex and other similar services!
 
 
-# Installation
+# Installation / Usage
 
 ## 1. Setup your `docker-compose.yml`
 
@@ -34,7 +34,7 @@ services:
 
 Start your service, or set of services defined in `docker-compose.yml`.
 
-```s
+```
 $ docker compose up -d
 ```
 
@@ -42,14 +42,45 @@ $ docker compose up -d
 
 You'll need to supply Plexdrive and Rclone with credentials, and additionally configure your Rclone crypt mount.
 
-```s
+```
 $ docker compose exec magicdrive setup
 ```
 
 ## 4. Use your magic mount!
-You can now write or read from your mount! **Please note**, this container **DOES NOT** currently move files from your local storage to Google Drive, so please keep whatever you store in the `/local` volume safe.
 
-```s
+You can now write or read from your mount! **Please note**, this container **DOES NOT** currently move files from your local storage to Google Drive, so please keep whatever you store in the `/local` volume safe. (*Setup a script to move the contents periodically, maybe?*)
+
+```
 $ ls /data/files
 docs  downloads  media
 ```
+
+## 5. Using your mount from other services (optional)
+
+To access magicdrive from other containers, you can simply bind mount the host path you supplied earlier. Please note that this requires your bind propagation is set to `shared` in the magicdrive service. Additionally, to ensure that magicdrive starts before your other services do, you should add magicdrive to the services `depends_on` and set the condition to `service_healthy`.
+
+```yml
+services:
+  jellyfin:
+    image: …
+    volumes:
+      - /data/files/tvshows:/data/tvshows
+      - /data/files/movies:/data/movies
+      …
+    depends_on:
+      magicdrive:
+        condition: service_healthy
+    …
+```
+
+## 6. Configuring Plexdrive, Rclone, and MergerFS
+
+Since your usecase may vary from mine, it may be necessary for you to supply additional options to the various mounts. You can do this by passing any of the following environment variables:
+
+  - **Plexdrive**: `PLEXDRIVE_OPTS` (**please note**, this will override [the default value](./Dockerfile#L74))
+  - **Rclone**: `RCLONE_OPTS`
+  - **MergerFS**: `MERGERFS_OPTS`
+
+# Contributing
+
+If you have any suggestions, improvements, or otherwise, please feel free to open an [Issue](https://github.com/Lustyn/magicdrive/issues/new) or [Pull Request](https://github.com/Lustyn/magicdrive/compare)! Open Source Software is written by **YOU**.
