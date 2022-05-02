@@ -74,7 +74,7 @@ ENV \
     PLEXDRIVE_OPTS=--chunk-load-threads=3 --chunk-check-threads=3 --chunk-load-ahead=2 --chunk-size=8M
 
 VOLUME /config /cache /enc /dec /data /local
-WORKDIR /data
+WORKDIR /config
 
 HEALTHCHECK --interval=10s --timeout=30s --start-period=10s --retries=10 \
     CMD /usr/local/bin/healthcheck
