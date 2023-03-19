@@ -1,6 +1,6 @@
 ARG UBUNTU_VER=22.04
 
-FROM ghcr.io/by275/base:ubuntu${UBUNTU_VER} AS prebuilt
+FROM ghcr.io/by275/base:ubuntu AS prebuilt
 FROM ubuntu:${UBUNTU_VER} AS ubuntu
 
 ARG TARGETARCH
