@@ -61,7 +61,7 @@ COPY root/ /
 # mark all local/bin as executable
 RUN \
     echo "**** permissions ****" && \
-    chmod a+x /usr/local/bin/*
+    chmod a+x /usr/local/bin/* /etc/cont-init.d/*
 
 # environment settings
 ENV \
