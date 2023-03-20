@@ -70,7 +70,8 @@ ENV \
     S6_SERVICES_GRACETIM=5000 \
     S6_KILL_GRACETIME=5000 \
     LANG=C.UTF-8 \
-    PLEXDRIVE_OPTS=--chunk-load-threads=3 --chunk-check-threads=3 --chunk-load-ahead=2 --chunk-size=8M
+    PLEXDRIVE_OPTS="--chunk-load-threads=3 --chunk-check-threads=3 --chunk-load-ahead=2 --chunk-size=8M" \
+    RCLONE_OPTS="--dir-cache-time=1s --poll-interval=0"
 
 VOLUME /config /cache /enc /dec /data /local
 WORKDIR /config
