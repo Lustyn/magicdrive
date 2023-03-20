@@ -27,7 +27,7 @@ RUN \
     apt-get install -yqq --no-install-recommends apt-utils && \
     apt-get install -yqq --no-install-recommends \
         ca-certificates \
-        fuse \
+        fuse3 \
         openssl \
         tzdata \
         wget && \
