@@ -17,8 +17,6 @@ RUN mkdir -p /usr/local/bin
 COPY --from=prebuilt /s6/ /
 
 ADD https://raw.githubusercontent.com/by275/docker-base/main/_/etc/cont-init.d/adduser /etc/cont-init.d/10-adduser
-ADD https://raw.githubusercontent.com/by275/docker-base/main/_/etc/cont-init.d/install-pkg /etc/cont-init.d/20-install-pkg
-ADD https://raw.githubusercontent.com/by275/docker-base/main/_/etc/cont-init.d/wait-for-mnt /etc/cont-init.d/30-wait-for-mnt
 
 # install packages
 RUN \
